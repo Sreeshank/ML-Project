@@ -15,9 +15,10 @@ def test_missing_bundle_is_actionable(monkeypatch,tmp_path):
 
 
 @pytest.mark.skipif(not (ROOT/'models/app_bundle/metadata.json').exists(),reason='Run python -m src.predict prepare for the integration bundle')
-def test_app_predict_and_explain(monkeypatch):
+@pytest.mark.parametrize('entrypoint', ['app.py', 'deploy/streamlit_app.py'])
+def test_app_predict_and_explain(monkeypatch, entrypoint):
     monkeypatch.setenv('PEROVSKITE_BUNDLE',str(ROOT/'models/app_bundle'))
-    app=AppTest.from_file(str(ROOT/'app.py'),default_timeout=120).run()
+    app=AppTest.from_file(str(ROOT/entrypoint),default_timeout=120).run()
     assert not app.exception and len(app.selectbox)==25
     app.button[0].click().run()
     assert not app.exception and not app.error

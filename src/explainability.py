@@ -9,12 +9,10 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import shap
-from catboost import Pool
 from sklearn.inspection import permutation_importance
 from threadpoolctl import threadpool_limits
 from .data_preprocessing import FEATURE_COLUMNS
 from .feature_engineering import TOKEN_FIELDS, MEASURE_FIELDS
-from .train_models import load_saved_data
 
 
 def source_feature(name):
@@ -73,6 +71,7 @@ def explain_prediction(pipeline, raw):
         base=np.broadcast_to(explanation.base_values,(len(raw),)).copy()
         plotting_data=dense
     else:
+        from catboost import Pool
         cats=engineered.select_dtypes(include=['object','string','category']).columns.tolist()
         contributions=model.get_feature_importance(Pool(engineered,cat_features=cats),type='ShapValues')
         values=contributions[:,:-1]; base=contributions[:,-1]
@@ -122,6 +121,7 @@ def save_shap_plots(result, raw, output):
 
 
 def explain_run(data_path,splits,run,output,samples=128):
+    from .train_models import load_saved_data
     if output.exists(): raise FileExistsError(f'Refusing to overwrite {output}')
     if not 2<=samples<=512: raise ValueError('samples must be between 2 and 512 for bounded CPU memory')
     if not (run/'COMPLETE').exists(): raise ValueError('Optimization run is incomplete')

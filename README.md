@@ -7,7 +7,7 @@ All five phases are implemented. The CPU research pipeline, optimization, explan
 
 ## Launch the completed app
 
-The selected model bundle exists in the original local workspace. Trained models and the source dataset are excluded from Git by `.gitignore`. For a fresh clone, provide a trusted prepared bundle at `models/app_bundle/` (or set `PEROVSKITE_BUNDLE` to its location) before making predictions. The setup and training sections below describe how to generate the pipeline from the source dataset.
+The selected inference bundle is included at `models/app_bundle/` so a fresh clone can make predictions. Other trained models, the original dataset, and processed datasets remain excluded by `.gitignore`. Only load model artifacts from a trusted source. The setup and training sections below describe how to regenerate the pipeline from the source dataset.
 
 From the project directory:
 
@@ -25,6 +25,19 @@ The opening crystal explorer supports dragging, atom-site inspection, zoom, bond
 UI checks: `python -m pytest tests/test_app.py -q` and `node --test tests/crystal_interactions.test.mjs` (the latter uses Node's built-in test runner; Node is not required to run the app).
 
 ## Setup
+
+### Deploy on Streamlit Community Cloud
+
+Go to https://share.streamlit.io/ and create an app with:
+
+- Repository: `Sreeshank/ML-Project`
+- Branch: `main`
+- Main file path: `deploy/streamlit_app.py`
+- Advanced settings → Python version: **3.12**
+
+Click **Deploy**. The entrypoint uses `deploy/requirements.txt` for the inference dependencies and the root `packages.txt` for LightGBM's OpenMP library. The saved model is loaded from the repository; the original CSV and a training run are not required. No API keys or secrets are needed for the app itself. Dependency installation and the final public URL are managed by Community Cloud.
+
+### Local research environment
 
 Use Python 3.11 or a compatible SageMaker kernel. Phase 1 was tested on Python 3.12.15, pandas 2.3.3, NumPy 1.26.4, and scikit-learn 1.7.2. No GPU is needed; this stage is suitable for ml.m5.xlarge.
 
