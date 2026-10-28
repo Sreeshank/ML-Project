@@ -1,0 +1,39 @@
+name: Bug report
+description: Report a problem with the app, model inference, or research code.
+title: "[Bug]: "
+body:
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Where did the problem occur?
+      options:
+        - Live Streamlit app
+        - Local app
+        - CLI prediction
+        - Training or research pipeline
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the tab, command, or input settings needed to reproduce the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and error output
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Environment details
+      description: For local problems, include operating system, Python version, and Streamlit version. For browser problems, include the browser and device.

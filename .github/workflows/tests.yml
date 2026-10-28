@@ -1,0 +1,54 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: Python and app integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      MPLBACKEND: Agg
+      OMP_NUM_THREADS: "2"
+      OPENBLAS_NUM_THREADS: "2"
+      NUMBA_NUM_THREADS: "2"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            deploy/requirements.txt
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libgomp1
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt -c deploy/requirements.txt
+      - name: Run Python and Streamlit integration tests
+        run: python -m pytest -q
+
+  crystal:
+    name: Crystal interaction tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check viewer JavaScript
+        run: node --check assets/crystal.js
+      - name: Run interaction tests
+        run: node --test tests/crystal_interactions.test.mjs

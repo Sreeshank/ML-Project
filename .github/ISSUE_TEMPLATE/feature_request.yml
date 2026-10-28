@@ -1,0 +1,20 @@
+name: Feature request
+description: Suggest an improvement to Solarcell XAI.
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested behavior
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Examples or additional context
