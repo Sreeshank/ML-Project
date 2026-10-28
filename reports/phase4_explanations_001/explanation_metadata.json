@@ -1,0 +1,14 @@
+{
+  "selected_candidate": "lightgbm_trial_0",
+  "family": "lightgbm",
+  "dataset_sha256": "85a2cc84ab6b30490fa98e47298fad4f81cd1558c9125678fa1741538273edd4",
+  "samples": 128,
+  "partition": "validation",
+  "permutation_repeats": 3,
+  "local_source_row": 19482,
+  "local_prediction": 11.107610513514881,
+  "local_base_value": 11.980971966061443,
+  "local_contribution_sum": -0.873361452587419,
+  "shap_version": "0.49.1",
+  "note": "Tree-path-dependent model associations. Raw-source grouping sums transformed descendants, not causal effects. Correlated inputs can share credit; permutation may create implausible configurations."
+}

@@ -1,0 +1,15 @@
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+*.pyc
+*.csv
+*.npz
+*.joblib
+*.cbm
+data/processed/
+models/*
+!models/.gitkeep
+reports/phase3*/models/
+reports/phase4*/models/
+*.sqlite3

@@ -1,0 +1,29 @@
+<section class="hero" aria-label="Solar intelligence and interactive crystal explorer">
+  <div class="intro">
+    <div class="eyebrow"><span></span> MATERIAL SCIENCE / MACHINE LEARNING</div>
+    <h1>A new perspective<br>on <em>solar intelligence.</em></h1>
+    <p>Explore the materials behind solar performance. Predict perovskite efficiency and see how every input shapes the model's estimate.</p>
+    <div class="chips"><span>PCE PREDICTION</span><span>SHAP EXPLANATIONS</span><span>CPU POWERED</span></div>
+  </div>
+  <div class="viewer">
+    <div class="viewer-top"><span><b>◈</b> CRYSTAL EXPLORER</span><span class="live">3D / ABX₃</span></div>
+    <div class="stage">
+      <canvas tabindex="0" role="img" aria-label="Interactive idealized cubic ABX3 crystal. Drag to rotate. Arrow keys rotate, plus and minus zoom, Home resets. Use the atom buttons below to inspect sites.">Interactive idealized cubic perovskite: A sites at cube corners, B at the center, and X at face centers.</canvas>
+      <div class="axis-label" aria-hidden="true">UNIT CELL <span>01</span></div>
+      <div class="hint">DRAG TO ROTATE · HOVER TO INSPECT</div>
+    </div>
+    <div class="atom-legend" aria-label="Inspect a crystal site">
+      <button type="button" data-site="A" aria-pressed="false"><i class="a"></i>A site</button>
+      <button type="button" data-site="B" aria-pressed="false"><i class="b"></i>B site</button>
+      <button type="button" data-site="X" aria-pressed="false"><i class="x"></i>X site</button>
+      <span>IDEALIZED STRUCTURE</span>
+    </div>
+    <div class="site-detail" role="status" aria-live="polite">Explore an idealized unit cell. This illustration does not simulate your inputs.</div>
+    <div class="controls">
+      <button type="button" data-action="rotate" aria-pressed="true">Ⅱ Pause spin</button>
+      <button type="button" data-action="bonds" aria-pressed="true">◇ Bonds</button>
+      <div class="zoom"><button type="button" data-action="out" aria-label="Zoom out">−</button><span data-zoom>100%</span><button type="button" data-action="in" aria-label="Zoom in">+</button></div>
+      <button type="button" data-action="reset" aria-label="Reset crystal view">↺ Reset</button>
+    </div>
+  </div>
+</section>

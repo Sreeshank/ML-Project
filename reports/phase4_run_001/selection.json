@@ -1,0 +1,38 @@
+{
+  "selected_candidate": "lightgbm_trial_0",
+  "family": "lightgbm",
+  "validation_metrics": {
+    "candidate": "lightgbm_trial_0",
+    "family": "lightgbm",
+    "MAE": 2.7808055863600387,
+    "RMSE": 3.6830212572141052,
+    "R2": 0.47782531994479804,
+    "fit_seconds": 5.599409917002049
+  },
+  "dataset_sha256": "85a2cc84ab6b30490fa98e47298fad4f81cd1558c9125678fa1741538273edd4",
+  "previous_run": "/home/sagemaker-user/perovskite-xai/reports/phase3_run_001",
+  "studies": {
+    "lightgbm": {
+      "completed_trials": 3,
+      "best_params": {
+        "learning_rate": 0.040392209797665515,
+        "num_leaves": 54,
+        "min_child_samples": 48,
+        "reg_lambda": 1.5751320499779735
+      }
+    },
+    "catboost": {
+      "completed_trials": 3,
+      "best_params": {
+        "depth": 6,
+        "learning_rate": 0.030530475514165503,
+        "l2_leaf_reg": 2.6449491482736547
+      }
+    }
+  },
+  "seed": 42,
+  "threads": 4,
+  "requested_trials_per_family": 3,
+  "test_evaluated": false,
+  "note": "No test predictions or metrics generated during Phase 4 tuning."
+}

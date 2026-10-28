@@ -1,0 +1,17 @@
+{
+  "phase": 5,
+  "tests_passed": 35,
+  "app_checks": [
+    "initial render",
+    "25 training-derived inputs",
+    "prediction and additive SHAP",
+    "changed-input resubmission",
+    "missing-bundle error"
+  ],
+  "cli_prediction_verified": true,
+  "prediction_notebook_code_verified": true,
+  "model_bundle": "models/app_bundle",
+  "active_pipeline": "lightgbm_trial_0",
+  "test_score_for_active_pipeline": null,
+  "launch_command": "python -m streamlit run app.py --server.port 8501"
+}

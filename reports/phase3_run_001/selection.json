@@ -1,0 +1,12 @@
+{
+  "selected_model": "lightgbm",
+  "validation_metrics": {
+    "model": "lightgbm",
+    "MAE": 2.8577554691842475,
+    "RMSE": 3.762761540625014,
+    "R2": 0.45496956892198503,
+    "fit_seconds": 3.079745745002583
+  },
+  "refit": false,
+  "note": "Selected fitted training pipeline; no train+validation refit."
+}

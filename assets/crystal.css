@@ -1,0 +1,38 @@
+:host { display:block; color:#e8eef8; font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+* { box-sizing:border-box; }
+.hero { display:grid; grid-template-columns:1.08fr 1fr; gap:36px; align-items:center; padding:25px 0 16px; }
+.eyebrow { color:#65e9da; font:10px ui-monospace,Consolas,monospace; letter-spacing:.12em; display:flex; align-items:center; gap:8px; }
+.eyebrow span { height:5px; width:5px; background:#65e9da; box-shadow:0 0 12px #65e9da; }
+h1 { font-size:clamp(36px,4.1vw,57px); font-weight:650; letter-spacing:-.045em; line-height:1.12; margin:22px 0 18px; }
+h1 em { font-style:normal; color:#8edbdc; background:linear-gradient(110deg,#65e9da,#9db7ff 65%,#ba9aff); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.intro p { color:#a5b4cc; font-size:14px; line-height:1.8; max-width:440px; margin:0; }
+.chips { display:flex; gap:7px; flex-wrap:wrap; margin-top:23px; }
+.chips span { color:#b5c5da; border:1px solid #97b3de26; border-radius:5px; padding:7px 9px; font:9px ui-monospace,Consolas,monospace; letter-spacing:.05em; background:#12203570; }
+.viewer { border:1px solid #7295c839; border-radius:18px; background:radial-gradient(ellipse at 50% 40%,#142c44,#0c1525 73%); box-shadow:inset 0 1px #c5d9ff07,0 18px 60px #0002; overflow:hidden; }
+.viewer-top { display:flex; justify-content:space-between; gap:8px; padding:17px 18px 0; font:9px ui-monospace,Consolas,monospace; letter-spacing:.12em; color:#b0c1da; }
+.viewer-top b { color:#65e9da; margin-right:7px; }
+.live { color:#65e9da; }
+.stage { height:238px; position:relative; }
+canvas { display:block; width:100%; height:100%; cursor:grab; touch-action:pan-y; border-radius:8px; }
+canvas:active { cursor:grabbing; }
+.axis-label { position:absolute; top:17px; left:18px; color:#607694; font:8px ui-monospace,Consolas,monospace; letter-spacing:.1em; pointer-events:none; }
+.axis-label span { display:block; margin-top:5px; font-size:20px; color:#7c91af; }
+.hint { position:absolute; bottom:7px; left:0; width:100%; text-align:center; pointer-events:none; color:#8da5c6; font:8px ui-monospace,Consolas,monospace; letter-spacing:.13em; }
+.atom-legend { display:flex; align-items:center; gap:7px; padding:2px 16px; }
+.atom-legend > span { margin-left:auto; font:7px ui-monospace,Consolas,monospace; letter-spacing:.1em; color:#8298b7; }
+button { font:10px ui-monospace,Consolas,monospace; color:#a7bad4; border:1px solid #90acc326; background:#132238; border-radius:6px; padding:7px 9px; cursor:pointer; transition:background .2s,border-color .2s,box-shadow .2s; }
+button:hover { background:#1b3548; color:#e7fffc; border-color:#65e9da70; box-shadow:0 0 18px #65e9da0c; }
+button:focus-visible,canvas:focus-visible { outline:2px solid #65e9da; outline-offset:-2px; }
+button[aria-pressed="true"] { border-color:#65e9da66; color:#83f6e3; background:#65e9da0a; }
+.atom-legend button { background:transparent; border-color:transparent; display:flex; align-items:center; gap:6px; padding:6px; }
+.atom-legend button[aria-pressed="true"] { border-color:#8ba8d356; }
+i { width:6px; height:6px; border-radius:50%; display:inline-block; }
+i.a { background:#65e9da; } i.b { background:#c6a0ff; } i.x { background:#ffc58a; }
+.site-detail { color:#9db0cc; font-size:10px; line-height:1.5; min-height:44px; padding:7px 20px; }
+.controls { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:7px; padding:12px 16px; border-top:1px solid #97b3de18; background:#090f1a66; }
+.zoom { display:flex; align-items:center; gap:5px; }
+.zoom span { min-width:32px; text-align:center; font:9px ui-monospace,Consolas,monospace; color:#91a6c3; }
+.zoom button { padding:5px 8px; font-size:14px; }
+@media(max-width:800px) { .hero { gap:20px; } h1 {font-size:38px;} .atom-legend>span{display:none;} .controls{padding:10px;gap:5px;} button{padding:6px;} }
+@media(max-width:640px) { .hero{grid-template-columns:1fr;gap:25px;padding-top:23px;} h1{font-size:43px;} .intro p{max-width:none;} .stage{height:250px;} .atom-legend>span{display:block;} .controls{padding:12px 16px;} }
+@media(prefers-reduced-motion:reduce) { *{transition:none!important;} }

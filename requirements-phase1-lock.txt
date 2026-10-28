@@ -1,0 +1,7 @@
+numpy==1.26.4
+pandas==2.3.3
+scikit-learn==1.7.2
+pytest==9.1.1
+joblib==1.6.0
+nbformat==5.11.1
+ipykernel==7.4.0
