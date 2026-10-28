@@ -1,6 +1,8 @@
 # Inference-only environment; the repository-root requirements include training tools.
 # Deploy using Python 3.12 to support the saved model's original NumPy version.
 numpy==1.26.4
+# Arrow 26 requires NumPy 2; Arrow 24 supports this saved-model environment.
+pyarrow==24.0.0
 pandas==2.3.3
 scikit-learn==1.7.2
 joblib==1.6.0

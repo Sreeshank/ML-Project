@@ -70,6 +70,7 @@ Commit application changes to the configured `main` branch. Community Cloud moni
 | --- | --- |
 | `Could not load the research model` | Confirm the two bundle files exist in the deployed branch and match each other. Check `PEROVSKITE_BUNDLE` if you configured an alternative directory. |
 | NumPy installation fails | Use Python 3.12 with the deployment requirements, which pin the saved model's original NumPy version. |
+| PyArrow reports that NumPy 2 is required | Reinstall `deploy/requirements.txt`, which pairs NumPy 1.26.4 with PyArrow 24.0.0. |
 | LightGBM reports a missing `libgomp` library | Confirm the root `packages.txt` file contains `libgomp1`, then rebuild the app environment. |
 | Training packages appear missing during a research command | Install root `requirements.txt`; deployment requirements cover inference. |
 | An update is not visible | Check the app's repository, branch, entrypoint, and build logs in Community Cloud. |
