@@ -95,9 +95,14 @@ def make_features(clean: pd.DataFrame):
             raise ValueError(f'Infinite numeric input in {c}')
     return X, cats
 
-def split_groups(X: pd.DataFrame):
+def split_groups(X: pd.DataFrame, groups=None):
     # Do not use target values, row IDs, or engineered features to define groups.
-    groups = pd.util.hash_pandas_object(X, index=False).to_numpy()
+    if groups is None:
+        groups = pd.util.hash_pandas_object(X, index=False).to_numpy()
+    else:
+        groups = np.asarray(groups)
+        if groups.shape != (len(X),) or pd.isna(groups).any():
+            raise ValueError('Group IDs must be aligned, nonmissing values')
     if len(np.unique(groups)) < 7:
         raise ValueError('At least seven distinct configurations are required')
     trainval, test = next(GroupShuffleSplit(n_splits=1,test_size=.15,random_state=SEED).split(X,groups=groups))
@@ -127,11 +132,22 @@ def build_preprocessor(X_train: pd.DataFrame, categorical_columns: list[str]):
         ]),numeric),
     ],sparse_threshold=1.0)
 
-def prepare(data_path: str | Path, output: str | Path):
+def prepare(data_path: str | Path, output: str | Path, group_column=None):
     raw = load_dataset(data_path)
     clean, source_rows, audit = clean_dataset(raw)
     X, cats = make_features(clean)
-    splits, groups = split_groups(X)
+    if group_column:
+        if group_column in EXPECTED_COLUMNS or group_column not in clean:
+            raise ValueError('Group column must be a separate publication/laboratory ID column')
+        ids = clean[group_column]
+        if ids.isna().any() or ids.astype(str).str.strip().eq('').any():
+            raise ValueError('Publication/laboratory group IDs cannot be missing')
+        # Connected components keep both repeated configurations and shared
+        # publications together, including configurations spanning publications.
+        group_ids = linked_groups(X, ids)
+    else:
+        group_ids = None
+    splits, groups = split_groups(X, group_ids)
     output = Path(output)
     if output.exists():
         raise FileExistsError(f'Refusing to overwrite artifacts: {output}')
@@ -142,7 +158,9 @@ def prepare(data_path: str | Path, output: str | Path):
     for label, idx in splits.items():
         manifest.loc[idx,'split'] = label
     manifest.to_csv(output/'split_manifest.csv',index=False)
-    audit.update({'seed':SEED,'categorical_features':len(cats),'categorical_columns':cats,
+    audit.update({'seed':SEED,'split_group_column':group_column,
+                  'split_group_policy':'Linked publication/laboratory and identical configuration groups' if group_column else 'Identical raw configurations',
+                  'categorical_features':len(cats),'categorical_columns':cats,
                   'feature_columns':FEATURE_COLUMNS,
                   'split_rows':{k:len(v) for k,v in splits.items()},
                   'split_groups':{k:len(np.unique(groups[v])) for k,v in splits.items()},
@@ -153,13 +171,36 @@ def prepare(data_path: str | Path, output: str | Path):
     (output/'audit.json').write_text(json.dumps(audit,indent=2)+'\n')
     return audit
 
+
+def linked_groups(X, publication_ids):
+    """Union publication IDs connected by an identical normalized device."""
+    ids = np.asarray(publication_ids).astype(str)
+    if ids.shape != (len(X),) or pd.isna(np.asarray(publication_ids)).any() or any(not v.strip() for v in ids):
+        raise ValueError('Publication IDs must be aligned and nonmissing')
+    parent = {value: value for value in ids}
+    def find(value):
+        while parent[value] != value:
+            parent[value] = parent[parent[value]]
+            value = parent[value]
+        return value
+    first = {}
+    hashes = pd.util.hash_pandas_object(X, index=False).to_numpy()
+    for config, publication in zip(hashes, ids):
+        if config in first:
+            a, b = find(publication), find(first[config])
+            parent[max(a, b)] = min(a, b)
+        else:
+            first[config] = publication
+    return np.array([find(value) for value in ids])
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data',type=Path,default=Path(__file__).resolve().parents[2]/'Solar Cell data set2.csv')
     parser.add_argument('--output',type=Path,default=Path(__file__).resolve().parents[1]/'data'/'processed'/'phase1')
+    parser.add_argument('--group-column', help='Optional publication/laboratory ID column; creates new group-safe splits for a new training run')
     args = parser.parse_args()
     try:
-        print(json.dumps(prepare(args.data,args.output),indent=2))
+        print(json.dumps(prepare(args.data,args.output,args.group_column),indent=2))
     except (ValueError,FileNotFoundError,FileExistsError) as exc:
         parser.exit(1,f'Preprocessing failed: {exc}\n')
 

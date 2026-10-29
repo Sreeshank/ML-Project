@@ -18,7 +18,7 @@ from xgboost import XGBRegressor
 from lightgbm import LGBMRegressor
 from catboost import CatBoostRegressor
 from .data_preprocessing import (TARGET, SEED, load_dataset, clean_dataset,
-                                 make_features, split_groups, build_preprocessor)
+                                 make_features, split_groups, build_preprocessor, linked_groups)
 from .feature_engineering import PerovskiteFeatureEngineer
 from .evaluate_models import regression_metrics, save_diagnostics, save_model_importance
 
@@ -49,7 +49,8 @@ def load_saved_data(data_path, split_dir):
         raise ValueError('Dataset checksum does not match saved splits')
     clean,source,audit_clean=clean_dataset(load_dataset(data_path))
     X,cats=make_features(clean)
-    expected,groups=split_groups(X)
+    group_column=audit.get('split_group_column')
+    expected,groups=split_groups(X, linked_groups(X,clean[group_column]) if group_column else None)
     with np.load(split_dir/'split_indices.npz') as saved:
         indices={k:saved[k].copy() for k in ['train','validation','test']}
     for k in indices:

@@ -447,5 +447,478 @@
     "xai__backcontact_thickness__mm_max",
     "xai__backcontact_thickness__mm_mean"
   ],
-  "unit_policy": "Bare numbers have unspecified units; explicit units summarized separately. No conversions or stoichiometry inferred."
+  "unit_policy": "Bare numbers have unspecified units; explicit units summarized separately. No conversions or stoichiometry inferred.",
+  "data_quality": {
+    "status": "computed",
+    "train": {
+      "rows": 28215,
+      "rate_denominator": "All rows in this partition; missing values are excluded from unknown-category counts.",
+      "vocabulary_notice": "Outside the bounded token vocabulary does not necessarily mean unseen in training.",
+      "fields": {
+        "Cell_stack_sequence": {
+          "rows": 28215,
+          "missing_count": 3,
+          "missing_rate": 0.0001063264221158958,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Cell_architecture": {
+          "rows": 28215,
+          "missing_count": 3,
+          "missing_rate": 0.0001063264221158958,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Substrate_stack_sequence": {
+          "rows": 28215,
+          "missing_count": 3,
+          "missing_rate": 0.0001063264221158958,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "ETL_stack_sequence": {
+          "rows": 28215,
+          "missing_count": 29,
+          "missing_rate": 0.0010278220804536594,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "ETL_deposition_procedure": {
+          "rows": 28215,
+          "missing_count": 432,
+          "missing_rate": 0.015311004784688996,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Perovskite_composition_a_ions": {
+          "rows": 28215,
+          "missing_count": 18,
+          "missing_rate": 0.0006379585326953748,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0,
+          "tokens": {
+            "rows_outside_bounded_vocabulary": 200,
+            "outside_vocabulary_row_rate": 0.00708842814105972
+          }
+        },
+        "Perovskite_composition_b_ions": {
+          "rows": 28215,
+          "missing_count": 2,
+          "missing_rate": 7.08842814105972e-05,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0,
+          "tokens": {
+            "rows_outside_bounded_vocabulary": 3,
+            "outside_vocabulary_row_rate": 0.0001063264221158958
+          }
+        },
+        "Perovskite_composition_c_ions": {
+          "rows": 28215,
+          "missing_count": 2,
+          "missing_rate": 7.08842814105972e-05,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0,
+          "tokens": {
+            "rows_outside_bounded_vocabulary": 2,
+            "outside_vocabulary_row_rate": 7.08842814105972e-05
+          }
+        },
+        "Perovskite_composition_short_form": {
+          "rows": 28215,
+          "missing_count": 0,
+          "missing_rate": 0.0,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Perovskite_additives_compounds": {
+          "rows": 28215,
+          "missing_count": 19546,
+          "missing_rate": 0.6927520822257665,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0,
+          "tokens": {
+            "rows_outside_bounded_vocabulary": 2414,
+            "outside_vocabulary_row_rate": 0.08555732766259082
+          }
+        },
+        "Perovskite_additives_concentrations": {
+          "rows": 28215,
+          "missing_count": 25004,
+          "missing_rate": 0.8861952861952862,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Perovskite_thickness": {
+          "rows": 28215,
+          "missing_count": 19328,
+          "missing_rate": 0.6850256955520113,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0,
+          "measurement": {
+            "rows_with_parsed_values": 8883,
+            "rows_with_unparsed_values": 0,
+            "rows_with_unspecified_units": 8883,
+            "rows_fully_parsed": 8883,
+            "parsed_row_rate": 0.31483253588516746,
+            "unparsed_row_rate": 0.0
+          }
+        },
+        "Perovskite_deposition_number_of_deposition_steps": {
+          "rows": 28215,
+          "missing_count": 0,
+          "missing_rate": 0.0,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Perovskite_deposition_procedure": {
+          "rows": 28215,
+          "missing_count": 109,
+          "missing_rate": 0.0038631933368775476,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Perovskite_deposition_solvents": {
+          "rows": 28215,
+          "missing_count": 727,
+          "missing_rate": 0.025766436292752083,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0,
+          "tokens": {
+            "rows_outside_bounded_vocabulary": 222,
+            "outside_vocabulary_row_rate": 0.00786815523657629
+          }
+        },
+        "Perovskite_deposition_quenching_induced_crystallisation": {
+          "rows": 28215,
+          "missing_count": 0,
+          "missing_rate": 0.0,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Perovskite_deposition_thermal_annealing_temperature": {
+          "rows": 28215,
+          "missing_count": 2335,
+          "missing_rate": 0.08275739854687224,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0,
+          "measurement": {
+            "rows_with_parsed_values": 25832,
+            "rows_with_unparsed_values": 0,
+            "rows_with_unspecified_units": 25832,
+            "rows_fully_parsed": 22531,
+            "parsed_row_rate": 0.9155413786992734,
+            "unparsed_row_rate": 0.0
+          }
+        },
+        "Perovskite_deposition_thermal_annealing_time": {
+          "rows": 28215,
+          "missing_count": 2984,
+          "missing_rate": 0.10575934786461103,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0,
+          "measurement": {
+            "rows_with_parsed_values": 25110,
+            "rows_with_unparsed_values": 0,
+            "rows_with_unspecified_units": 25110,
+            "rows_fully_parsed": 21801,
+            "parsed_row_rate": 0.8899521531100478,
+            "unparsed_row_rate": 0.0
+          }
+        },
+        "HTL_stack_sequence": {
+          "rows": 28215,
+          "missing_count": 24,
+          "missing_rate": 0.0008506113769271664,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "HTL_deposition_procedure": {
+          "rows": 28215,
+          "missing_count": 2020,
+          "missing_rate": 0.07159312422470317,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Backcontact_stack_sequence": {
+          "rows": 28215,
+          "missing_count": 9,
+          "missing_rate": 0.0003189792663476874,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Backcontact_thickness_list": {
+          "rows": 28215,
+          "missing_count": 5513,
+          "missing_rate": 0.19539252170831117,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0,
+          "measurement": {
+            "rows_with_parsed_values": 22695,
+            "rows_with_unparsed_values": 7,
+            "rows_with_unspecified_units": 22695,
+            "rows_fully_parsed": 22540,
+            "parsed_row_rate": 0.8043593833067517,
+            "unparsed_row_rate": 0.0002480949849370902
+          }
+        },
+        "Backcontact_deposition_procedure": {
+          "rows": 28215,
+          "missing_count": 178,
+          "missing_rate": 0.006308701045543151,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Encapsulation": {
+          "rows": 28215,
+          "missing_count": 0,
+          "missing_rate": 0.0,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Encapsulation_stack_sequence": {
+          "rows": 28215,
+          "missing_count": 27481,
+          "missing_rate": 0.9739854687223108,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        }
+      }
+    },
+    "validation": {
+      "rows": 6152,
+      "rate_denominator": "All rows in this partition; missing values are excluded from unknown-category counts.",
+      "vocabulary_notice": "Outside the bounded token vocabulary does not necessarily mean unseen in training.",
+      "fields": {
+        "Cell_stack_sequence": {
+          "rows": 6152,
+          "missing_count": 0,
+          "missing_rate": 0.0,
+          "unknown_category_count": 1349,
+          "unknown_category_rate": 0.21927828348504552
+        },
+        "Cell_architecture": {
+          "rows": 6152,
+          "missing_count": 1,
+          "missing_rate": 0.00016254876462938882,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Substrate_stack_sequence": {
+          "rows": 6152,
+          "missing_count": 1,
+          "missing_rate": 0.00016254876462938882,
+          "unknown_category_count": 35,
+          "unknown_category_rate": 0.005689206762028608
+        },
+        "ETL_stack_sequence": {
+          "rows": 6152,
+          "missing_count": 16,
+          "missing_rate": 0.002600780234070221,
+          "unknown_category_count": 375,
+          "unknown_category_rate": 0.060955786736020805
+        },
+        "ETL_deposition_procedure": {
+          "rows": 6152,
+          "missing_count": 128,
+          "missing_rate": 0.02080624187256177,
+          "unknown_category_count": 80,
+          "unknown_category_rate": 0.013003901170351105
+        },
+        "Perovskite_composition_a_ions": {
+          "rows": 6152,
+          "missing_count": 6,
+          "missing_rate": 0.0009752925877763329,
+          "unknown_category_count": 47,
+          "unknown_category_rate": 0.007639791937581275,
+          "tokens": {
+            "rows_outside_bounded_vocabulary": 57,
+            "outside_vocabulary_row_rate": 0.009265279583875163
+          }
+        },
+        "Perovskite_composition_b_ions": {
+          "rows": 6152,
+          "missing_count": 3,
+          "missing_rate": 0.00048764629388816646,
+          "unknown_category_count": 13,
+          "unknown_category_rate": 0.0021131339401820547,
+          "tokens": {
+            "rows_outside_bounded_vocabulary": 12,
+            "outside_vocabulary_row_rate": 0.0019505851755526658
+          }
+        },
+        "Perovskite_composition_c_ions": {
+          "rows": 6152,
+          "missing_count": 3,
+          "missing_rate": 0.00048764629388816646,
+          "unknown_category_count": 15,
+          "unknown_category_rate": 0.0024382314694408325,
+          "tokens": {
+            "rows_outside_bounded_vocabulary": 8,
+            "outside_vocabulary_row_rate": 0.0013003901170351106
+          }
+        },
+        "Perovskite_composition_short_form": {
+          "rows": 6152,
+          "missing_count": 0,
+          "missing_rate": 0.0,
+          "unknown_category_count": 81,
+          "unknown_category_rate": 0.013166449934980494
+        },
+        "Perovskite_additives_compounds": {
+          "rows": 6152,
+          "missing_count": 4171,
+          "missing_rate": 0.6779908972691807,
+          "unknown_category_count": 206,
+          "unknown_category_rate": 0.033485045513654096,
+          "tokens": {
+            "rows_outside_bounded_vocabulary": 625,
+            "outside_vocabulary_row_rate": 0.101592977893368
+          }
+        },
+        "Perovskite_additives_concentrations": {
+          "rows": 6152,
+          "missing_count": 5353,
+          "missing_rate": 0.8701235370611183,
+          "unknown_category_count": 109,
+          "unknown_category_rate": 0.017717815344603382
+        },
+        "Perovskite_thickness": {
+          "rows": 6152,
+          "missing_count": 4166,
+          "missing_rate": 0.6771781534460338,
+          "unknown_category_count": 92,
+          "unknown_category_rate": 0.01495448634590377,
+          "measurement": {
+            "rows_with_parsed_values": 1986,
+            "rows_with_unparsed_values": 0,
+            "rows_with_unspecified_units": 1986,
+            "rows_fully_parsed": 1978,
+            "parsed_row_rate": 0.3228218465539662,
+            "unparsed_row_rate": 0.0
+          }
+        },
+        "Perovskite_deposition_number_of_deposition_steps": {
+          "rows": 6152,
+          "missing_count": 0,
+          "missing_rate": 0.0,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Perovskite_deposition_procedure": {
+          "rows": 6152,
+          "missing_count": 22,
+          "missing_rate": 0.003576072821846554,
+          "unknown_category_count": 32,
+          "unknown_category_rate": 0.005201560468140442
+        },
+        "Perovskite_deposition_solvents": {
+          "rows": 6152,
+          "missing_count": 162,
+          "missing_rate": 0.02633289986996099,
+          "unknown_category_count": 54,
+          "unknown_category_rate": 0.008777633289986996,
+          "tokens": {
+            "rows_outside_bounded_vocabulary": 51,
+            "outside_vocabulary_row_rate": 0.00828998699609883
+          }
+        },
+        "Perovskite_deposition_quenching_induced_crystallisation": {
+          "rows": 6152,
+          "missing_count": 0,
+          "missing_rate": 0.0,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Perovskite_deposition_thermal_annealing_temperature": {
+          "rows": 6152,
+          "missing_count": 484,
+          "missing_rate": 0.07867360208062418,
+          "unknown_category_count": 140,
+          "unknown_category_rate": 0.022756827048114433,
+          "measurement": {
+            "rows_with_parsed_values": 5654,
+            "rows_with_unparsed_values": 0,
+            "rows_with_unspecified_units": 5654,
+            "rows_fully_parsed": 4915,
+            "parsed_row_rate": 0.9190507152145644,
+            "unparsed_row_rate": 0.0
+          }
+        },
+        "Perovskite_deposition_thermal_annealing_time": {
+          "rows": 6152,
+          "missing_count": 638,
+          "missing_rate": 0.10370611183355007,
+          "unknown_category_count": 108,
+          "unknown_category_rate": 0.017555266579973992,
+          "measurement": {
+            "rows_with_parsed_values": 5494,
+            "rows_with_unparsed_values": 0,
+            "rows_with_unspecified_units": 5494,
+            "rows_fully_parsed": 4758,
+            "parsed_row_rate": 0.8930429128738622,
+            "unparsed_row_rate": 0.0
+          }
+        },
+        "HTL_stack_sequence": {
+          "rows": 6152,
+          "missing_count": 7,
+          "missing_rate": 0.0011378413524057217,
+          "unknown_category_count": 432,
+          "unknown_category_rate": 0.07022106631989597
+        },
+        "HTL_deposition_procedure": {
+          "rows": 6152,
+          "missing_count": 346,
+          "missing_rate": 0.05624187256176853,
+          "unknown_category_count": 7,
+          "unknown_category_rate": 0.0011378413524057217
+        },
+        "Backcontact_stack_sequence": {
+          "rows": 6152,
+          "missing_count": 1,
+          "missing_rate": 0.00016254876462938882,
+          "unknown_category_count": 42,
+          "unknown_category_rate": 0.0068270481144343306
+        },
+        "Backcontact_thickness_list": {
+          "rows": 6152,
+          "missing_count": 987,
+          "missing_rate": 0.16043563068920677,
+          "unknown_category_count": 37,
+          "unknown_category_rate": 0.006014304291287386,
+          "measurement": {
+            "rows_with_parsed_values": 5165,
+            "rows_with_unparsed_values": 0,
+            "rows_with_unspecified_units": 5165,
+            "rows_fully_parsed": 5123,
+            "parsed_row_rate": 0.8395643693107933,
+            "unparsed_row_rate": 0.0
+          }
+        },
+        "Backcontact_deposition_procedure": {
+          "rows": 6152,
+          "missing_count": 47,
+          "missing_rate": 0.007639791937581275,
+          "unknown_category_count": 34,
+          "unknown_category_rate": 0.0055266579973992196
+        },
+        "Encapsulation": {
+          "rows": 6152,
+          "missing_count": 0,
+          "missing_rate": 0.0,
+          "unknown_category_count": 0,
+          "unknown_category_rate": 0.0
+        },
+        "Encapsulation_stack_sequence": {
+          "rows": 6152,
+          "missing_count": 5989,
+          "missing_rate": 0.9735045513654096,
+          "unknown_category_count": 21,
+          "unknown_category_rate": 0.0034135240572171653
+        }
+      }
+    },
+    "scope": "Saved training and validation partitions, using the frozen model training vocabulary. Test data excluded from this feature audit.",
+    "source_report": "reports/phase6_validation_001/analytics.json"
+  }
 }

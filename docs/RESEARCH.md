@@ -7,6 +7,8 @@ Explainable AI for perovskite solar-cell power conversion efficiency (PCE) predi
 All five phases are implemented. The CPU research pipeline, optimization, explanations, prediction wrapper, and Streamlit app are available. Existing workspace notebooks and experiments are preserved separately.
 
 
+The phase-by-phase results below describe their original runs. The frozen optimized model now also has separate calibration/evaluation diagnostics, evaluated prediction intervals, richer quality audits, and guided inputs; see [the current validation report and reproduction](VALIDATION.md).
+
 ## Launch the completed app
 
 The selected inference bundle is included at `models/app_bundle/` so a fresh clone can make predictions. Other trained models, the original dataset, and processed datasets remain excluded by `.gitignore`. Only load model artifacts from a trusted source. The setup and training sections below describe how to regenerate the pipeline from the source dataset.

@@ -9,6 +9,8 @@ import joblib
 import numpy as np
 import pandas as pd
 from .data_preprocessing import FEATURE_COLUMNS, MISSING_CATEGORY
+from .input_guidance import check_device, explanation_summary
+from .uncertainty import prediction_intervals
 
 ROOT=Path(__file__).resolve().parents[1]
 BOOL_COLUMNS=['Encapsulation','Perovskite_deposition_quenching_induced_crystallisation']
@@ -62,6 +64,11 @@ def load_bundle(path=ROOT/'models/app_bundle'):
     actual=hashlib.sha256((path/'pipeline.joblib').read_bytes()).hexdigest()
     if actual!=metadata['model_sha256']: raise ValueError('Bundle model checksum mismatch')
     pipeline=joblib.load(path/'pipeline.joblib')
+    if (path/'analytics.json').exists():
+        analytics=json.loads((path/'analytics.json').read_text(encoding='utf-8'))
+        if analytics.get('model_sha256')!=actual or analytics.get('dataset_sha256')!=metadata.get('dataset_sha256'):
+            raise ValueError('Analytics artifact does not match this model and dataset')
+        metadata['analytics']=analytics
     return pipeline,metadata
 
 
@@ -75,11 +82,16 @@ def predict_records(pipeline,metadata,records,explain=False):
         if unseen: warnings.append(f'{column}: {len(unseen)} value(s) absent from training data')
     result={'predicted_PCE_percent':prediction.tolist(),'warnings':warnings,
             'notice':'Model estimates, not experimentally verified efficiencies. SHAP describes associations, not causal effects.'}
+    result['device_checks']=[check_device(row) for row in raw.to_dict(orient='records')]
+    intervals=prediction_intervals(prediction,metadata.get('analytics'),metadata.get('model_sha256'))
+    result['prediction_interval']=intervals
+    result['uncertainty_status']='evaluated' if intervals else 'unavailable: run research validation with the original source data'
     if explain:
         from .explainability import explain_prediction
         explained=explain_prediction(pipeline,raw)
         result['SHAP_base_PCE_percent']=explained['base_values'].tolist()
         result['SHAP_grouped_contributions']=[dict(zip(FEATURE_COLUMNS,map(float,row))) for row in explained['grouped_values']]
+        result['explanation_summary']=[explanation_summary(contrib,row) for contrib,row in zip(result['SHAP_grouped_contributions'],raw.to_dict(orient='records'))]
     return result
 
 
@@ -106,6 +118,7 @@ def prepare_bundle(data_path,splits,run,phase3,output):
               'phase3_validation_comparison':comparison.to_dict(orient='records'),
               'phase3_test_metrics':json.loads((phase3/'test_metrics.json').read_text()),
               'phase4_validation_comparison':pd.read_csv(run/'validation_comparison.csv').to_dict(orient='records')}
+    metadata['training_presets']=make_training_presets(train,source[indices['train']])
     # Some incumbent rows have no duration, so replace pandas NaNs for strict JSON.
     metadata['phase4_validation_comparison']=json.loads(pd.DataFrame(metadata['phase4_validation_comparison']).to_json(orient='records'))
     (output/'metadata.json').write_text(json.dumps(metadata,indent=2,allow_nan=False)+'\n')
@@ -114,6 +127,18 @@ def prepare_bundle(data_path,splits,run,phase3,output):
     result=predict_records(pipeline,loaded,defaults,explain=True)
     assert len(result['predicted_PCE_percent'])==1
     print(f'Bundle saved to {output}; training-derived options and end-to-end inference verified.',flush=True)
+
+
+def make_training_presets(train, source_rows):
+    """Choose whole real training rows, never independent modes or synthetic devices."""
+    presets=[]
+    for architecture in train['Cell_architecture'].value_counts().head(3).index:
+        positions=np.flatnonzero(train['Cell_architecture'].eq(architecture).to_numpy())
+        position=int(positions[0])
+        presets.append({'name':f'Recorded {architecture} device · source row {int(source_rows[position])}',
+                        'source_row':int(source_rows[position]),
+                        'input':{c:None if pd.isna(v) else v for c,v in train.iloc[position].to_dict().items()}})
+    return presets
 
 
 def main():

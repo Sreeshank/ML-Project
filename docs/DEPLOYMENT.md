@@ -39,9 +39,10 @@ packages.txt
 .streamlit/config.toml
 models/app_bundle/pipeline.joblib
 models/app_bundle/metadata.json
+models/app_bundle/analytics.json
 ```
 
-`example_input.json` in the bundle provides a complete input for CLI checks. The bundle is included in Git, while original datasets, processed splits, and other trained models are excluded.
+`example_input.json` in the bundle provides a complete input for CLI checks. `analytics.json` adds evaluated intervals, held-out metrics, recorded-device presets, and quality audits; a model-only bundle still predicts, with those additions marked unavailable. Analytics must match the model and source-dataset checksums. See [validation reproduction](VALIDATION.md). The bundle is included in Git, while original datasets, processed splits, and other trained models are excluded.
 
 The application checks the pipeline's SHA256 against its metadata before loading it. Keep those two files together when replacing a model. Use trusted model artifacts: the checksum detects mismatched files and does not establish the safety of arbitrary serialized Python objects.
 

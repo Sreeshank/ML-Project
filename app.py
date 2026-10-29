@@ -10,18 +10,20 @@ import streamlit as st
 from src.data_preprocessing import FEATURE_COLUMNS, MISSING_CATEGORY
 from src.predict import load_bundle, predict_records, BOOL_COLUMNS
 from src.ui_components import crystal_viewer
+from src.input_guidance import FIELD_GUIDE, field_label, check_device
+from src.data_quality import availability_snapshot
 
 ROOT = Path(__file__).resolve().parent
 st.set_page_config(page_title="Solarcell XAI | Research Lab", page_icon="◈", layout="wide")
 
 
 @st.cache_resource
-def resources(path, model_mtime, metadata_mtime):
+def resources(path, model_mtime, metadata_mtime, analytics_mtime=0):
     return load_bundle(path)
 
 
 def label(column):
-    return column.replace("Perovskite_", "Perovskite ").replace("_", " ")
+    return field_label(column)
 
 
 def section(number, title, note=""):
@@ -66,7 +68,7 @@ def render_overview(pipeline, metadata):
         st.markdown(f'''<div class="lab-card">
 <div class="card-index">ACTIVE MODEL / VALIDATION SELECTED</div>
 <h3 class="lab-model-name">{escape(decision['selected_candidate'])}</h3>
-<p>Selected by validation RMSE. The active optimized model has no newly computed test score.</p>
+<p>Selected by validation RMSE. {'Frozen-model evaluation and interval coverage are available in Model comparison.' if metadata.get('analytics', {}).get('evaluation') else 'The active optimized model has no newly computed test score.'}</p>
 <div class="lab-model-meta"><div><small>VALIDATION RMSE · PCE POINTS</small><strong>{metrics['RMSE']:.3f}</strong></div><div><small>VALIDATION R²</small><strong>{metrics['R2']:.3f}</strong></div></div>
 </div>''', unsafe_allow_html=True)
 
@@ -82,6 +84,35 @@ def render_overview(pipeline, metadata):
         st.subheader("Interpretation limits")
         st.write("SHAP describes how this model uses inputs, not causal material effects. Bare measurement numbers retain unspecified units.")
         st.caption("Dropdown values occur in training data. Independently combined choices may form an untested or physically inconsistent device. Earlier test metrics belong to the Phase 3 pipeline.")
+    render_quality(metadata)
+
+
+def render_quality(metadata):
+    analytics = metadata.get('analytics', {})
+    quality = analytics.get('data_quality', availability_snapshot(metadata['dataset_audit']))
+    with st.expander('Data quality · missing inputs, parsing, and training support'):
+        if quality.get('status') == 'computed':
+            partition = st.selectbox('Audit partition', ['train', 'validation', 'calibration', 'evaluation'], key='quality_partition')
+            report = quality[partition]
+            rows = []
+            for column, entry in report['fields'].items():
+                measure = entry.get('measurement', {})
+                rows.append({'Input': label(column), 'Missing (%)': 100 * entry['missing_rate'],
+                             'Absent from training (%)': 100 * entry['unknown_category_rate'],
+                             'Parsed measurement rows (%)': 100 * measure['parsed_row_rate'] if measure else None,
+                             'Rows with unparsed measurements': measure.get('rows_with_unparsed_values'),
+                             'Rows with unspecified units': measure.get('rows_with_unspecified_units'),
+                             'Rows outside token vocabulary': entry.get('tokens', {}).get('rows_outside_bounded_vocabulary')})
+            st.caption(f"{report['rows']:,} rows · {report['rate_denominator']}")
+            st.caption(report['vocabulary_notice'])
+        else:
+            st.info(quality['notice'])
+            rows = [{'Input': label(column), 'Null records': entry['null_count'],
+                     'Null (%)': 100 * entry['null_rate']} for column, entry in quality['fields'].items()]
+            st.caption(quality['scope'])
+        st.dataframe(pd.DataFrame(rows), hide_index=True, width='stretch')
+        st.download_button('Download data-quality audit', json.dumps(quality, indent=2),
+                           file_name='solarcell_data_quality.json', mime='application/json')
 
 
 def render_comparison(metadata):
@@ -109,6 +140,31 @@ def render_comparison(metadata):
         st.caption("These scores belong to the earlier, untuned pipeline. They do not evaluate the active optimized model.")
         st.dataframe(pd.DataFrame(metadata["phase3_test_metrics"]).T, width="stretch")
     st.caption("Repeated validation-based selection can make validation estimates optimistic. No independent external benchmark has been established.")
+    analytics = metadata.get('analytics', {})
+    st.subheader('Frozen model · held-out evaluation')
+    if analytics.get('evaluation'):
+        evaluation = analytics['evaluation']
+        for column, name in zip(st.columns(3), ['RMSE', 'MAE', 'R2']):
+            column.metric(f'Held-out {name}', f"{evaluation['metrics'][name]:.4f}")
+        st.caption(f"{evaluation['rows']:,} evaluation rows across {evaluation['groups']:,} groups. {evaluation['scope']}")
+        uncertainty = analytics['uncertainty']
+        coverage = uncertainty['evaluation']
+        st.write(f"Nominal interval coverage: {100 * uncertainty['nominal_coverage']:.0f}%. Measured group coverage: {100 * coverage['empirical_group_coverage']:.1f}%; measured row coverage: {100 * coverage['empirical_row_coverage']:.1f}%.")
+        st.caption(uncertainty['notice'])
+    else:
+        st.info('Held-out evaluation and calibrated prediction intervals are pending the original source CSV. Existing validation scores do not provide a prediction interval.')
+
+
+def load_selected_preset(presets):
+    selected = st.session_state.get('device_preset')
+    if selected is not None:
+        for field, value in presets[selected]['input'].items():
+            st.session_state[field] = value
+        st.session_state['review_device_checks'] = False
+
+
+def reset_device_review():
+    st.session_state['review_device_checks'] = False
 
 
 def render_reactor(complete):
@@ -156,6 +212,8 @@ def render_prediction(pipeline, metadata):
 <h3>Design a cell. Discover its potential.</h3><p>Move from material choices to a model estimate, then explore the contributions behind it.</p></div><div class="studio-emblem" aria-hidden="true">✧</div></div>
 <div class="studio-steps"><div><span>01</span><section><b>Configure</b><small>Materials & fabrication</small></section></div><i></i><div><span>02</span><section><b>Predict</b><small>Estimated solar efficiency</small></section></div><i></i><div><span>03</span><section><b>Understand</b><small>Signed SHAP contributions</small></section></div></div>''', unsafe_allow_html=True)
     options, defaults = metadata["training_options"], metadata["default_input"]
+    presets = metadata.get('analytics', {}).get('training_presets') or metadata.get('training_presets') or [
+        {'name': f"Recorded {defaults['Cell_architecture']} device · source row {metadata['default_source_row']}", 'input': defaults}]
     groups = {
         "Device and layer structure": [c for c in FEATURE_COLUMNS if c.startswith(("Cell_", "Substrate_", "ETL_", "HTL_", "Backcontact_"))],
         "Perovskite composition & additives": [c for c in FEATURE_COLUMNS if c.startswith(("Perovskite_composition_", "Perovskite_additives_"))],
@@ -172,7 +230,11 @@ def render_prediction(pipeline, metadata):
     inputs, output = st.columns([1.75, 1], gap="large")
     with inputs:
         with st.container(key="studio_inputs"):
-            with st.form("solar_cell_input"):
+            st.selectbox('Load a recorded training device', range(len(presets)), index=None,
+                         placeholder='Choose a complete recorded device', format_func=lambda i: presets[i]['name'],
+                         key='device_preset', on_change=load_selected_preset, args=(presets,),
+                         help='Loads all 25 inputs from one actual training record. A recorded device is not a performance recommendation.')
+            with st.container(key='device_configuration'):
                 st.markdown('<div class="panel-heading"><span>INPUT CONFIGURATION</span><b>25 parameters / 4 modules</b></div>', unsafe_allow_html=True)
                 st.caption("Starts from one real training configuration. Recorded values are preserved; bare thickness, temperature, and time values have unspecified units.")
                 for group_index, (title, fields) in enumerate(groups.items()):
@@ -191,10 +253,19 @@ def render_prediction(pipeline, metadata):
 
                             values[field] = columns[i % 2].selectbox(
                                 label(field), choices, index=choices.index(defaults[field]),
-                                format_func=fmt, key=field,
+                                format_func=fmt, key=field, help=FIELD_GUIDE[field][1], on_change=reset_device_review,
                             )
+                checks = check_device(values)
+                conflicts = [issue for issue in checks if issue['code'] not in ('unspecified_units', 'unparsed_measurement')]
+                if checks:
+                    with st.expander(f'Configuration review · {len(checks)} flags', expanded=bool(conflicts)):
+                        st.caption('Conservative checks cover explicit conflicts and measurement parsing. Passing these checks does not establish chemical validity or device feasibility.')
+                        for issue in checks:
+                            st.warning(issue['message'])
+                acknowledged = st.checkbox('I reviewed the configuration conflicts and want a model estimate.',
+                                           key='review_device_checks') if conflicts else True
                 st.markdown('<div class="launch-note"><span>◈</span> Every prediction includes an explanation.</div>', unsafe_allow_html=True)
-                submitted = st.form_submit_button("Launch prediction →", type="primary", width="stretch")
+                submitted = st.button("Launch prediction →", key='launch_prediction', type="primary", width="stretch", disabled=not acknowledged)
             if submitted:
                 try:
                     with st.spinner("Computing efficiency and SHAP contributions…"):
@@ -211,7 +282,16 @@ def render_prediction(pipeline, metadata):
                 payload = st.session_state["prediction_result"]
                 result = payload["result"]
                 st.metric("Estimated PCE", f"{result['predicted_PCE_percent'][0]:.2f}%")
-                st.caption("Last submitted configuration · Submit again after editing inputs. No calibrated uncertainty interval is available.")
+                changed = payload['input'] != values
+                st.caption('Inputs have changed · Launch again to update this result.' if changed else 'Result for the current submitted configuration.')
+                interval = result.get('prediction_interval')
+                if interval:
+                    st.metric(f"{100 * interval['nominal_coverage']:.0f}% nominal prediction interval",
+                              f"{interval['lower_PCE_percent'][0]:.2f}%–{interval['upper_PCE_percent'][0]:.2f}%")
+                    st.caption(f"Measured group coverage: {100 * interval['empirical_group_coverage']:.1f}% · row coverage: {100 * interval['empirical_row_coverage']:.1f}%.")
+                    st.caption(interval['notice'])
+                else:
+                    st.caption('Prediction interval unavailable: source-data calibration and held-out coverage evaluation have not been completed.')
                 st.download_button("↓ Export prediction + SHAP", json.dumps(payload, indent=2),
                                    file_name="perovskite_prediction.json", mime="application/json", width="stretch")
             else:
@@ -237,6 +317,7 @@ def render_prediction(pipeline, metadata):
 </div>''', unsafe_allow_html=True)
         st.subheader("SHAP explanation for this prediction")
         render_contributions(contributions)
+        st.write(result.get('explanation_summary', [''])[0])
         st.caption("The equation includes all contributions; the bars show the 12 largest by magnitude. Values are rounded for display. Contributions combine each raw field and its engineered/encoded descendants. They describe predictive associations, not causal effects.")
         with st.expander("Full contributions and submitted input"):
             st.dataframe(contributions.to_frame(), width="stretch")
@@ -253,6 +334,7 @@ def main():
         pipeline, metadata = resources(
             str(bundle), (bundle / "pipeline.joblib").stat().st_mtime_ns,
             (bundle / "metadata.json").stat().st_mtime_ns,
+            (bundle / 'analytics.json').stat().st_mtime_ns if (bundle / 'analytics.json').exists() else 0,
         )
     except (OSError, ValueError, KeyError) as exc:
         st.error(f"Could not load the research model: {exc}")

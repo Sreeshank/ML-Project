@@ -15,6 +15,7 @@ models/app_bundle/*
 !models/app_bundle/pipeline.joblib
 !models/app_bundle/metadata.json
 !models/app_bundle/example_input.json
+!models/app_bundle/analytics.json
 reports/phase3*/models/
 reports/phase4*/models/
 *.sqlite3

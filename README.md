@@ -13,7 +13,9 @@ Power conversion efficiency (PCE) is the percentage of incoming light power conv
 
 - **Interactive crystal explorer:** drag to rotate, zoom, inspect A/B/X sites, toggle bonds, and reset the view. Keyboard controls and reduced-motion support are included.
 - **Prediction studio:** configure 25 recorded material, device-layer, and fabrication inputs, then estimate PCE with the selected LightGBM pipeline.
+- **Guided inputs:** load complete recorded training devices, read field and unit help, and review layer, architecture, composition, and encapsulation conflicts before prediction.
 - **Explainable output:** inspect signed, grouped SHAP contributions and download the submitted inputs and prediction as JSON.
+- **Uncertainty and data quality:** inspect evaluated prediction intervals, measured coverage, per-partition missingness, parser coverage, and training-support diagnostics.
 - **Model comparison:** review validation metrics from five algorithms and the budgeted LightGBM/CatBoost optimization runs.
 - **Portable inference:** the selected model bundle is included, so app use does not require the original CSV or a training run.
 
@@ -22,9 +24,9 @@ The crystal is an idealized cubic ABX3 illustration. It supports exploration of 
 ## Try the app
 
 1. Open **[solarcellxai.streamlit.app](https://solarcellxai.streamlit.app/)**.
-2. Select **Predict & explain** and review the four input modules.
+2. Select **Predict & explain**, optionally load a recorded training device, and review the four input modules and field help.
 3. Click **Launch prediction** to calculate estimated PCE and SHAP contributions.
-4. Read the base-value equation and contribution bars, then export the JSON result if needed.
+4. Read the prediction interval, plain-language explanation, base-value equation, and contribution bars, then export the JSON result if needed.
 
 Results reflect the last submitted configuration. Submit again after changing inputs. The overview and model-comparison tabs explain the dataset and evaluation context.
 
@@ -96,7 +98,25 @@ The active optimized pipeline is **`lightgbm_trial_0`**, selected by validation 
 | RMSE | 3.6830 PCE percentage points |
 | R2 | 0.4778 |
 
-These results come from [the recorded model-selection artifact](reports/phase4_run_001/selection.json). The optimized model has **no newly computed test score**. Earlier Phase 3 test metrics evaluate the earlier untuned pipeline and are documented separately in the [research notes](docs/RESEARCH.md).
+These results come from [the recorded model-selection artifact](reports/phase4_run_001/selection.json). Earlier Phase 3 test metrics evaluate the earlier untuned pipeline and are documented separately in the [research notes](docs/RESEARCH.md).
+
+### Frozen-model evaluation and intervals
+
+The original test partition was separated by configuration group into **3,049 calibration rows / 1,446 groups** and **3,066 evaluation rows / 1,447 groups**, with seed 43. The existing app model was evaluated without refitting or tuning.
+
+| Metric | Separate evaluation subset |
+| --- | ---: |
+| MAE | 2.7700 PCE percentage points |
+| RMSE | 3.6429 PCE percentage points |
+| R2 | 0.5367 |
+| Nominal interval coverage | 90% |
+| Measured group coverage | 90.53% |
+| Measured row coverage | 93.05% |
+| Interval half-width | 6.7474 PCE percentage points |
+
+Intervals use the finite-sample quantile of maximum absolute residual per calibration configuration group. Coverage is measured separately on the evaluation subset. Values are not clipped to physical bounds. These are internal results; the prior Phase 3 model already used the original test partition. They are **not an independent external benchmark**, and nominal coverage assumes exchangeable groups.
+
+See the [evaluation artifact](reports/phase6_validation_001/analytics.json) and [reproduction and assumptions](docs/VALIDATION.md). The source CSV is required to regenerate analytics, but inference uses the bundled analytics without needing the CSV.
 
 ### Example explanation artifact
 
@@ -146,7 +166,7 @@ See the [deployment guide](docs/DEPLOYMENT.md) for the dependency files, bundle 
 
 PCE outputs are model estimates and have not been experimentally verified. SHAP describes predictive associations, not causal material effects. Independently combined dropdown choices can form untested or physically inconsistent devices, and bare recorded measurement numbers retain unspecified units.
 
-Repeated validation-based model selection can make validation estimates optimistic. No independent external benchmark or calibrated prediction interval has been established.
+Repeated validation-based model selection can make validation estimates optimistic. No independent external benchmark has been established. Evaluated intervals are wide and rely on configuration-group exchangeability; shared laboratories/publications and distribution shift can violate that assumption. Configuration checks flag explicit conflicts and do not establish chemical validity.
 
 ## Feedback
 

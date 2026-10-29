@@ -191,6 +191,11 @@ def main():
               'categorical_features':cats,'vocabulary':engineer.vocabulary_,
               'feature_names':list(transformed.columns),
               'unit_policy':'Bare numbers have unspecified units; explicit units summarized separately. No conversions or stoichiometry inferred.'}
+    from .data_quality import quality_report
+    options = {c:train[c].dropna().unique().tolist() for c in FEATURE_COLUMNS}
+    report['data_quality'] = {'status':'computed',
+                              'train':quality_report(train, options, engineer.vocabulary_),
+                              'validation':quality_report(validation, options, engineer.vocabulary_)}
     (args.output/'feature_audit.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({k:report[k] for k in ['training_rows','validation_rows','raw_features','total_features','engineered_features']},indent=2))
 
